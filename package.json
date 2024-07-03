@@ -1,0 +1,45 @@
+{
+  "name": "rank-hand",
+  "version": "1.0.0",
+  "description": "Ranks a poker hand.",
+  "keywords": [
+    "card",
+    "casino",
+    "evaluator",
+    "hand",
+    "holdem",
+    "hold'em",
+    "poker",
+    "texas"
+  ],
+  "homepage": "https://github.com/rtomrud/rank-hand#readme",
+  "bugs": {
+    "url": "https://github.com/rtomrud/rank-hand/issues"
+  },
+  "license": "MIT",
+  "author": "Artem Rudenko <rtomrud@gmail.com>",
+  "files": [
+    "index.js",
+    "index.d.ts"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rtomrud/rank-hand.git"
+  },
+  "scripts": {
+    "format": "prettier --check .",
+    "lint": "eslint .",
+    "test": "node --test --experimental-test-coverage",
+    "posttest": "npm run lint && npm run format"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.6.0",
+    "eslint": "9.6.0",
+    "prettier": "3.3.2"
+  },
+  "type": "module",
+  "exports": {
+    "types": "./index.d.ts",
+    "default": "./index.js"
+  }
+}
