@@ -2,7 +2,23 @@
  * Inspired by https://www.codeproject.com/Articles/569271/A-Poker-hand-analyzer-in-JavaScript-using-bit-math
  */
 
-const cardRanks = {
+/**
+ * The card rank.
+ */
+export type rank = "A" | "K" | "Q" | "J" | "T" | "9" | "8" | "7" | "6" | "5" | "4" | "3" | "2";
+
+/**
+ * The card suit, where c is clubs, d is diamonds, h is hearts and s is spades.
+ */
+export type suit = "c" | "d" | "h" | "s";
+
+/**
+ * A card, either as a pair of [`rank`, `suit`] or as a string in standard
+ * poker hand notation, e.g., `"Ac"`.
+ */
+export type card = readonly [rank, suit] | `${rank}${suit}`;
+
+const cardRanks: Record<rank, number> = {
   A: 14,
   K: 13,
   Q: 12,
@@ -18,9 +34,20 @@ const cardRanks = {
   2: 2,
 };
 
-const suitFlags = { c: 1, d: 2, h: 4, s: 8 };
+const suitFlags: Record<suit, number> = { c: 1, d: 2, h: 4, s: 8 };
 
-export default function (cards) {
+/**
+ * Return the rank of a hand given an array of 5 cards.
+ *
+ * @param cards - An array of 5 pairs of [`rank`, `suit`], where
+ * `rank` is `"A"|"K"|"Q"|"J"|"T"|"9"|"8"|"7"|"6"|"5"|"4"|"3"|"2"` and
+ * `suit` is `"c"|"d"|"h"|"s"`,
+ * or alternatively, an array of 5 strings in standard poker hand notation,
+ * e.g., `["Ac", "Ad", "Kd", "Qh", "2s"]`.
+ * @returns The rank of the hand, from 1 (straight flush) to 9 (high card).
+ * @throws {TypeError} The hand is invalid.
+ */
+export default function rankHand(cards: readonly card[]): number {
   // The histogram of each rank as bits 51 to 0, with one nibble for each rank
   // E.g., fours over twos (4,4,4,2,2) is 0b011100000011 (0x703)
   let countBits = 0;
@@ -35,10 +62,10 @@ export default function (cards) {
 
   for (let i = 0; i < 5; i += 1) {
     // The card rank, where A is 14, K is 13, Q is 12, J is 11, T is 10, 2 is 2
-    const cardRank = cardRanks[cards[i][0]];
+    const cardRank = cardRanks[cards[i][0] as rank];
 
     // The card suit flag, where c is 1, d is 2, h is 4, and s is 8
-    const suitFlag = suitFlags[cards[i][1]];
+    const suitFlag = suitFlags[cards[i][1] as suit];
 
     // The nibble offset to store the 4 bits with the counts of each card rank
     const nibbleOffset = 2 ** (cardRank * 4);
@@ -64,7 +91,7 @@ export default function (cards) {
     // Check straight (any five consecutive 1s) and five-high straight (0x403c)
     (rankBits / (rankBits & -rankBits) === 31 || rankBits === 0x403c ? 3 : 1) -
     // Check flush (only 1 suit, i.e., a power of two)
-    ((suitBits & -suitBits) === suitBits);
+    Number((suitBits & -suitBits) === suitBits);
 
   return [2, 1, 5, 4, 9, 8, 7, 0, 6, 3][handRankIndex];
 }
